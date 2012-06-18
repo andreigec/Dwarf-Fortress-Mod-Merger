@@ -20,12 +20,12 @@ namespace DwarfFortressModMerger
         #region licensing
 
         private const string AppTitle = "Dwarf Fortress Mod Merger";
-        private const double AppVersion = 0.1;
+        private const double AppVersion = 0.2;
         private const String HelpString = "";
 
-        private const String UpdatePath = "http://www.andreigec.net/games/dfmm/dfmm.zip";
-        private const String VersionPath = "http://www.andreigec.net/games/dfmm/version.txt";
-        private const String ChangelogPath = "http://www.andreigec.net/games/dfmm/changelog.txt";
+        private const String UpdatePath = "https://github.com/EvilSeven/Dwarf-Fortress-Mod-Merger/zipball/master";
+        private const String VersionPath = "https://raw.github.com/EvilSeven/Dwarf-Fortress-Mod-Merger/master/INFO/version.txt";
+        private const String ChangelogPath = "https://raw.github.com/EvilSeven/Dwarf-Fortress-Mod-Merger/master/INFO/changelog.txt";
 
         private readonly String OtherText =
             @"©" + DateTime.Now.Year +
