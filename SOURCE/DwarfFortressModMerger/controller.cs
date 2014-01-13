@@ -53,15 +53,15 @@ namespace DwarfFortressModMerger
             string moddinit = modtemp + init;
 
             //delete temps if already exist
-            FileUpdates.DeleteDirectory(vantemp);
-            FileUpdates.DeleteDirectory(modtemp);
-            FileUpdates.DeleteDirectory(outputtemp);
+            FileExtras.DeleteDirectory(vantemp);
+            FileExtras.DeleteDirectory(modtemp);
+            FileExtras.DeleteDirectory(outputtemp);
 
             ChangeStatusText(sf, Resources.start_exct_van_zip);
             try
             {
                 //unpack vanilla
-                Zip.ExtractZipFile(vanilla, vantemp);
+                ZipExtras.ExtractZipFile(vanilla, vantemp);
                 ChangeStatusText(sf, Resources.fin_exct_van_zip);
             }
             catch (Exception ex)
@@ -73,7 +73,7 @@ namespace DwarfFortressModMerger
             try
             {
                 //unpack mod
-                Zip.ExtractZipFile(mod, modtemp);
+                ZipExtras.ExtractZipFile(mod, modtemp);
                 ChangeStatusText(sf, Resources.fin_exct_mod_zip);
             }
             catch (Exception ex)
@@ -85,15 +85,15 @@ namespace DwarfFortressModMerger
             try
             {
                 //move vanilla
-                FileUpdates.MergeDirectories(outputtemp, vantemp);
+                FileExtras.MergeDirectories(outputtemp, vantemp);
 
                 //delete raw and art
-                FileUpdates.DeleteDirectory(outputtemp + raw);
-                FileUpdates.DeleteDirectory(outputtemp + art);
+                FileExtras.DeleteDirectory(outputtemp + raw);
+                FileExtras.DeleteDirectory(outputtemp + art);
 
                 //move mod raw and art
-                FileUpdates.MergeDirectories(outputtemp + raw, modtemp + raw);
-                FileUpdates.MergeDirectories(outputtemp + art, modtemp + art);
+                FileExtras.MergeDirectories(outputtemp + raw, modtemp + raw);
+                FileExtras.MergeDirectories(outputtemp + art, modtemp + art);
                 //copy init/init.d
                 if (File.Exists(modinit))
                     File.Copy(modinit, outputinit, true);
@@ -105,25 +105,25 @@ namespace DwarfFortressModMerger
                 //get save games if required
                 if (mergesave && Directory.Exists(realsavedir))
                 {
-                    FileUpdates.CreateDirectory(outputtempsave);
-                    FileUpdates.MergeDirectories(outputtempsave, realsavedir);
+                    FileExtras.CreateDirectory(outputtempsave);
+                    FileExtras.MergeDirectories(outputtempsave, realsavedir);
                 }
 
                 //get init dir if required
                 if (mergeinit && Directory.Exists(realsaveinit))
                 {
-                    FileUpdates.MergeDirectories(outputtempinit, realsaveinit);
+                    FileExtras.MergeDirectories(outputtempinit, realsaveinit);
                 }
 
                 //delete temps
-                FileUpdates.DeleteDirectory(vantemp);
-                FileUpdates.DeleteDirectory(modtemp);
+                FileExtras.DeleteDirectory(vantemp);
+                FileExtras.DeleteDirectory(modtemp);
                 
                 //move temp to real
-                FileUpdates.DeleteDirectory(realoutput);
-                FileUpdates.MergeDirectories(realoutput, outputtemp);
+                FileExtras.DeleteDirectory(realoutput);
+                FileExtras.MergeDirectories(realoutput, outputtemp);
 
-                FileUpdates.DeleteDirectory(outputtemp);
+                FileExtras.DeleteDirectory(outputtemp);
                 ChangeStatusText(sf, Resources.ready);
             }
 

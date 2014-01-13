@@ -12,6 +12,7 @@ using System.Threading;
 using System.Windows.Forms;
 using ANDREICSLIB;
 using DwarfFortressModMerger.Properties;
+using DwarfFortressModMerger.ServiceReference1;
 
 namespace DwarfFortressModMerger
 {
@@ -20,12 +21,8 @@ namespace DwarfFortressModMerger
         #region licensing
 
         private const string AppTitle = "Dwarf Fortress Mod Merger";
-        private const double AppVersion = 0.2;
+        private const double AppVersion = 0.3;
         private const String HelpString = "";
-
-        private const String UpdatePath = "https://github.com/EvilSeven/Dwarf-Fortress-Mod-Merger/zipball/master";
-        private const String VersionPath = "https://raw.github.com/EvilSeven/Dwarf-Fortress-Mod-Merger/master/INFO/version.txt";
-        private const String ChangelogPath = "https://raw.github.com/EvilSeven/Dwarf-Fortress-Mod-Merger/master/INFO/changelog.txt";
 
         private readonly String OtherText =
             @"©" + DateTime.Now.Year +
@@ -49,7 +46,8 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Licensing.CreateLicense(this, HelpString, AppTitle, AppVersion, OtherText, VersionPath, UpdatePath, ChangelogPath, menuStrip1);
+            Licensing.CreateLicense(this, menuStrip1, new Licensing.SolutionDetails(GetDetails, HelpString, AppTitle, AppVersion, OtherText));
+
             LoadConfig();
             if (vanillaLB.Items.Count >= 1)
                 vanillaLB.SelectedIndex = 0;
@@ -62,6 +60,33 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
 
             //init clientside
             Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("");
+        }
+
+        public Licensing.DownloadedSolutionDetails GetDetails()
+        {
+            try
+            {
+                var sr = new ServicesClient();
+                var ti = sr.GetTitleInfo(AppTitle);
+                if (ti == null)
+                    return null;
+                return ToDownloadedSolutionDetails(ti);
+
+            }
+            catch (Exception)
+            {
+            }
+            return null;
+        }
+
+        public static Licensing.DownloadedSolutionDetails ToDownloadedSolutionDetails(TitleInfoServiceModel tism)
+        {
+            return new Licensing.DownloadedSolutionDetails()
+            {
+                ZipFileLocation = tism.LatestTitleDownloadPath,
+                ChangeLog = tism.LatestTitleChangelog,
+                Version = tism.LatestTitleVersion
+            };
         }
 
         private const string cfgpath = "DFMM.cfg";
@@ -111,7 +136,7 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
             foreach (var f in files)
             {
                 if (lb.Items.Contains(f) == false)
-                    lb.Items.Insert(0,f);
+                    lb.Items.Insert(0, f);
             }
         }
 
@@ -201,21 +226,21 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
 
         private void startmergebutton_Click(object sender, EventArgs e)
         {
-            if (vanillaLB.SelectedIndex==-1)
+            if (vanillaLB.SelectedIndex == -1)
             {
                 MessageBox.Show("Error:Add and select a vanilla DF zip file");
                 return;
             }
 
-            if (modLB.SelectedIndex==-1)
+            if (modLB.SelectedIndex == -1)
             {
                 MessageBox.Show("Error:Add and select a mod DF zip file");
                 return;
             }
 
-            if (outputLB.SelectedIndex==-1)
+            if (outputLB.SelectedIndex == -1)
             {
-                  MessageBox.Show("Error:Add and select an output directory for the merged files");
+                MessageBox.Show("Error:Add and select an output directory for the merged files");
                 return;
             }
 
@@ -223,7 +248,7 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
             var m = modLB.SelectedItem.ToString();
             var o = outputLB.SelectedItem.ToString();
 
-            if (File.Exists(v)==false||v.EndsWith(".zip",StringComparison.CurrentCultureIgnoreCase)==false)
+            if (File.Exists(v) == false || v.EndsWith(".zip", StringComparison.CurrentCultureIgnoreCase) == false)
             {
                 MessageBox.Show("Error:Vanilla file must be a zip and exist");
                 return;
@@ -234,14 +259,14 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
                 MessageBox.Show("Error:Mod file must be a zip and exist");
                 return;
             }
-            
-            if (File.Exists(o)||Directory.Exists(o)==false)
+
+            if (File.Exists(o) || Directory.Exists(o) == false)
             {
                 MessageBox.Show("Error:Output directory must be a directory and exist");
                 return;
             }
 
-            var res=controller.MergeOp(v, m, o, mergesaveCB.Checked, mergeinitdirCB.Checked, ChangeStatusText);
+            var res = controller.MergeOp(v, m, o, mergesaveCB.Checked, mergeinitdirCB.Checked, ChangeStatusText);
             if (res == false)
                 return;
 
