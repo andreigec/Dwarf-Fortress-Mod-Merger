@@ -11,6 +11,8 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using ANDREICSLIB;
+using ANDREICSLIB.Helpers;
+using ANDREICSLIB.Licensing;
 using DwarfFortressModMerger.Properties;
 using DwarfFortressModMerger.ServiceReference1;
 
@@ -21,7 +23,7 @@ namespace DwarfFortressModMerger
         #region licensing
 
         private const string AppTitle = "Dwarf Fortress Mod Merger";
-        private const double AppVersion = 0.3;
+        private const double AppVersion = 0.4;
         private const String HelpString = "";
 
         private readonly String OtherText =
@@ -266,12 +268,20 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
                 return;
             }
 
-            var res = controller.MergeOp(v, m, o, mergesaveCB.Checked, mergeinitdirCB.Checked, ChangeStatusText);
-            if (res == false)
-                return;
+            try
+            {
+                startmergebutton.Enabled = false;
+                var res = controller.MergeOp(v, m, o, mergesaveCB.Checked, mergeinitdirCB.Checked, ChangeStatusText);
+                if (res == false)
+                    return;
 
-            if (opendirCB.Checked)
-                Process.Start(o);
+                if (opendirCB.Checked)
+                    Process.Start(o);
+            }
+            finally
+            {
+                startmergebutton.Enabled = true;
+            }
         }
 
         private void helpToolStripMenuItem1_Click(object sender, EventArgs e)
