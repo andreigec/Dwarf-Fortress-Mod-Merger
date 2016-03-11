@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -14,16 +14,12 @@ using ANDREICSLIB;
 using ANDREICSLIB.Helpers;
 using ANDREICSLIB.Licensing;
 using DwarfFortressModMerger.Properties;
-using DwarfFortressModMerger.ServiceReference1;
 
 namespace DwarfFortressModMerger
 {
     public partial class Form1 : Form
     {
         #region licensing
-
-        private const string AppTitle = "Dwarf Fortress Mod Merger";
-        private const double AppVersion = 0.4;
         private const String HelpString = "";
 
         private readonly String OtherText =
@@ -34,6 +30,7 @@ Licensed under GNU LGPL (http://www.gnu.org/)
 
 Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
 ";
+
         #endregion
 
         public Form1()
@@ -48,7 +45,7 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            Licensing.CreateLicense(this, menuStrip1, new Licensing.SolutionDetails(GetDetails, HelpString, AppTitle, AppVersion, OtherText));
+            Licensing.LicensingForm(this, menuStrip1, HelpString, OtherText);
 
             LoadConfig();
             if (vanillaLB.Items.Count >= 1)
@@ -63,34 +60,7 @@ Zip Assets © SharpZipLib (http://www.sharpdevelop.net/OpenSource/SharpZipLib/)
             //init clientside
             Thread.CurrentThread.CurrentUICulture = CultureInfo.GetCultureInfo("");
         }
-
-        public Licensing.DownloadedSolutionDetails GetDetails()
-        {
-            try
-            {
-                var sr = new ServicesClient();
-                var ti = sr.GetTitleInfo(AppTitle);
-                if (ti == null)
-                    return null;
-                return ToDownloadedSolutionDetails(ti);
-
-            }
-            catch (Exception)
-            {
-            }
-            return null;
-        }
-
-        public static Licensing.DownloadedSolutionDetails ToDownloadedSolutionDetails(TitleInfoServiceModel tism)
-        {
-            return new Licensing.DownloadedSolutionDetails()
-            {
-                ZipFileLocation = tism.LatestTitleDownloadPath,
-                ChangeLog = tism.LatestTitleChangelog,
-                Version = tism.LatestTitleVersion
-            };
-        }
-
+        
         private const string cfgpath = "DFMM.cfg";
         private void SaveConfig()
         {

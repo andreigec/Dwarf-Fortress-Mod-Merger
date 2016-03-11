@@ -1,5 +1,3 @@
-
-/SOURCE/DwarfFortressModMerger.6.0.ReSharper.user
-/SOURCE/_ReSharper.DwarfFortressModMerger
-/SOURCE/DwarfFortressModMerger/obj
-/SOURCE/DwarfFortressModMerger/bin
+*.suo
+bin
+obj
